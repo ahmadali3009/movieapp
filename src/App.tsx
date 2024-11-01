@@ -5,7 +5,13 @@ import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import Toprated from './Toprated'
-
+export interface Movie {
+  id: number;
+  poster_path: string;
+  original_title: string;
+  title: string;
+  // Add other properties if needed
+}
 function App() {
   let [page , setpage] = useState(1)
   let [search , setsearch] = useState("")
@@ -24,20 +30,20 @@ function App() {
     }
 
 
-  let handlesearch = (e)=>
+  let handlesearch = (e:any)=>
     {
       let value =  e.target.value
       console.log("value",value)
       setsearch(value)
 
     }
-  let handlepage = (e)=>
+  let handlepage = ()=>
     {
       let nextpage = data?.data.page + 1
       setpage(nextpage)
       console.log(nextpage)
     }
-    let handlepreviouspage = (e)=>
+    let handlepreviouspage = ()=>
       {
         let nextpage = data?.data.page - 1
         setpage(nextpage)
@@ -80,7 +86,7 @@ function App() {
     if (searchError) {
       return <div>Error loading search results: {searchError.message}</div>;
     }
-    
+ 
   
   return (
     <>
@@ -103,7 +109,7 @@ function App() {
   <h1 className="text-2xl font-bold mb-4 text-center">Search Results</h1>
   <div className="flex space-x-4 overflow-x-auto scrollbar-hide"> {/* Flex container for horizontal layout */}
    
-    {searchData?.data.results.map(movie => (
+    {searchData?.data.results.map((movie: Movie) => (
        <Link to={`/${movie.id}`}>
       <div key={movie.id} className="bg-white shadow-md rounded-lg p-4 w-48 flex-shrink-0">
         <img
@@ -126,7 +132,7 @@ function App() {
       <h1 className="text-2xl font-bold mb-4 text-center">Movie List (Page {page})</h1>
       {/* Horizontal scrollable movie list */}
       <div className="flex space-x-4 overflow-x-auto scrollbar-hide">
-        {data && data.data.results.map(movie => (
+        {data && data.data.results.map((movie:Movie) => (
           <Link to={`/${movie.id}`}>
           <div key={movie.id} className="bg-white shadow-md rounded-lg p-4 w-48 flex-shrink-0">
             <img
