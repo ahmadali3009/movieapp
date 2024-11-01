@@ -9,7 +9,6 @@ import {
 import App from './App.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Moviedetail from './Moviedetail.tsx';
-import Toprated from './Toprated.tsx';
 import MovieDetail2 from './moviedetal2.tsx';
 
 const queryClient = new QueryClient();
