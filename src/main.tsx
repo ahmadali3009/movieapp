@@ -14,15 +14,15 @@ import MovieDetail2 from './moviedetal2.tsx';
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
-    path: "/",      // Main route for App component
+    path: "/",     
     element: <App />,
   },
   {
-    path: "/:id",   // Route for movie details page
-    element: <Moviedetail />, // Use a dedicated details component here if available
+    path: "/:id",   
+    element: <Moviedetail />, 
   }, {
-    path: "/top-detail",   // Route for movie details page
-    element: <MovieDetail2 />, // Use a dedicated details component here if available
+    path: "/top-detail",  
+    element: <MovieDetail2 />,
   },
   ])
 createRoot(document.getElementById('root')!).render(

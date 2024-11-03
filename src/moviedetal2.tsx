@@ -13,7 +13,7 @@ const MovieDetail2 = () => {
       <h1>{movie.name}</h1>
       <p>{movie.overview}</p>
       <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={`${movie.name} poster`} />
-      {/* Add more details as needed */}
+      
     </div>
   );
 };

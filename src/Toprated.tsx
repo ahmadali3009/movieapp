@@ -43,7 +43,7 @@ const Toprated = () => {
       <h1>Top Rated TV Shows</h1>
       <div className="p-4 max-w-5xl mx-auto">
         <div className="flex space-x-4 overflow-x-auto scrollbar-hide">
-          {data && data.data.results.map(movie => (
+          {data && data.data.results.map((movie:any) => (
             <Link to={"/top-detail"} state={{movie}}>
             <div key={movie.id} className="bg-white shadow-md rounded-lg p-4 w-48 flex-shrink-0">
               <img
