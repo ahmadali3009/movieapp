@@ -10,6 +10,7 @@ import App from './App.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Moviedetail from './Moviedetail.tsx';
 import MovieDetail2 from './moviedetal2.tsx';
+import Signup from "./components/signup.js";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -20,9 +21,14 @@ const router = createBrowserRouter([
   {
     path: "/:id",   
     element: <Moviedetail />, 
-  }, {
+  }, 
+  {
     path: "/top-detail",  
     element: <MovieDetail2 />,
+  },
+  {
+    path: "/signup",  
+    element: <Signup />,
   },
   ])
 createRoot(document.getElementById('root')!).render(
