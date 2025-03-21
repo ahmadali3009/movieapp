@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Moviedetail from './Moviedetail.tsx';
 import MovieDetail2 from './moviedetal2.tsx';
 import Signup from "./components/signup.js";
+import { AuthProvider } from './authContext/authcontext.tsx';
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -32,9 +33,9 @@ const router = createBrowserRouter([
   },
   ])
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+    <AuthProvider>
       <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
     </QueryClientProvider>,
-  </StrictMode>,
+    </AuthProvider>
 )
