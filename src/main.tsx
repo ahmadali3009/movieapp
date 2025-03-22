@@ -12,6 +12,7 @@ import Moviedetail from './Moviedetail.tsx';
 import MovieDetail2 from './moviedetal2.tsx';
 import Signup from "./components/signup.js";
 import { AuthProvider } from './authContext/authcontext.tsx';
+import Login from './components/login.tsx';
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -31,11 +32,15 @@ const router = createBrowserRouter([
     path: "/signup",  
     element: <Signup />,
   },
+  {
+    path: "/login",  
+    element: <Login />,
+  },
   ])
 createRoot(document.getElementById('root')!).render(
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-    </QueryClientProvider>,
+    </QueryClientProvider>
     </AuthProvider>
 )
