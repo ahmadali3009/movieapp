@@ -19,7 +19,7 @@ const Signup = () => {
   }
 
   let auth = useContext(AuthContext)
-
+  
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left Panel - Decorative */}

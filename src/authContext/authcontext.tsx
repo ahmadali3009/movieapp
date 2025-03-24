@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }: any) => {
       if(response.data.message === "user created")
       {
         console.log("user created")
+        alert("user created")
         setUser(userData);
       }
     }
@@ -33,8 +34,13 @@ export const AuthProvider = ({ children }: any) => {
       console.log(error)
     }
   };
-
   const login =async (userData: User) => {
+    let response = await axios.post("http://localhost:5000/api/login", userData)
+    if(response)
+      {
+        alert("login success")
+      }
+    console.log("response", response)
     setUser(userData);
   };
 
