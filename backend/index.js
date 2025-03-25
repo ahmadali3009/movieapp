@@ -6,6 +6,7 @@ const Port = 5000;
 const connect = require('./connection');
 const signuproute = require('./routes/signup');
 const loginroute = require('./routes/login');
+const jwt = require('jsonwebtoken');
 // Middleware
 server.use(cors());
 server.use(express.json());

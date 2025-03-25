@@ -1,5 +1,6 @@
 import axios from 'axios';
 import{ createContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 interface User
 {
   username: string;
@@ -12,6 +13,7 @@ interface AuthContextType{
   signup: (userDate : User) => Promise<void>
   logout: () => void
 }
+let navigate = useNavigate()
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export default AuthContext;
@@ -41,6 +43,8 @@ export const AuthProvider = ({ children }: any) => {
         alert("login success")
       }
     console.log("response", response)
+    localStorage.setItem("token", response.data.token)
+    navigate("/" , {replace: true})
     setUser(userData);
   };
 

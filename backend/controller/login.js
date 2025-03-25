@@ -1,7 +1,7 @@
 const e = require('cors');
 let usersignup = require('../model/signup');
-
-
+const jwt = require('jsonwebtoken');
+const { generateToken } = require('../service/security');
 async function handleloginuser(req, res) {
     try{
         let {email , password} = req.body;
@@ -21,8 +21,9 @@ async function handleloginuser(req, res) {
             console.log("some thing wrong")
             return res.status(400).json({message: "some thing wrong"})
         }
+        let token = generateToken({email: user.email , id: user._id , expiresIn: "1h" , createdAt: Date.now()})
         console.log("success")
-        return res.status(200).json({message: "login success"})
+        return res.status(200).json({message: "login success" , token: token})
     }
     catch(error)
     {
