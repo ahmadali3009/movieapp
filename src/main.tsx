@@ -13,34 +13,41 @@ import MovieDetail2 from './moviedetal2.tsx';
 import Signup from "./components/signup.js";
 import { AuthProvider } from './authContext/authcontext.tsx';
 import Login from './components/login.tsx';
+import ProtectedRoutes from './authContext/ProtectedRoutes.tsx';
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
-    path: "/",     
-    element: <App />,
+    path: "/",
+    element: <AuthProvider>
+      <ProtectedRoutes><App /></ProtectedRoutes></AuthProvider>
+    ,
   },
   {
-    path: "/:id",   
-    element: <Moviedetail />, 
-  }, 
-  {
-    path: "/top-detail",  
-    element: <MovieDetail2 />,
+    path: "/:id",
+    element: <AuthProvider>
+      <ProtectedRoutes><Moviedetail /></ProtectedRoutes></AuthProvider>
+    ,
   },
   {
-    path: "/signup",  
-    element: <Signup />,
+    path: "/top-detail",
+    element: <AuthProvider>
+      <ProtectedRoutes><MovieDetail2 /></ProtectedRoutes></AuthProvider>
+    ,
   },
   {
-    path: "/login",  
-    element: <Login />,
+    path: "/signup",
+    element: <AuthProvider><Signup /></AuthProvider>
+    ,
   },
-  ])
+  {
+    path: "/login",
+    element: <AuthProvider><Login /></AuthProvider>
+    ,
+  },
+])
 createRoot(document.getElementById('root')!).render(
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-    </AuthProvider>
-)
+  <QueryClientProvider client={queryClient}>
+    <RouterProvider router={router} />
+  </QueryClientProvider>
+          )

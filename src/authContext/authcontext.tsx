@@ -13,13 +13,13 @@ interface AuthContextType{
   signup: (userDate : User) => Promise<void>
   logout: () => void
 }
-let navigate = useNavigate()
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export default AuthContext;
 
 export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<User | null>(null);
+  let navigate = useNavigate()
 
   const signup = async (userData:User ) => {
     try {
