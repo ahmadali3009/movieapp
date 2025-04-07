@@ -8,6 +8,7 @@ const signuproute = require('./routes/signup');
 const loginroute = require('./routes/login');
 const topmovieroute = require('./routes/topMoviedetails');
 const jwt = require('jsonwebtoken');
+const authmiddleware = require('./middleware/authmiddleware');
 
 // Middleware
 server.use(cors());

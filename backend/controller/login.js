@@ -21,7 +21,7 @@ async function handleloginuser(req, res) {
             console.log("some thing wrong")
             return res.status(400).json({message: "some thing wrong"})
         }
-        let token = generateToken({email: user.email , id: user._id , expiresIn: "1h" , createdAt: Date.now()})
+        let token = generateToken({email: user.email , id: user._id , createdAt: Date.now()})
         console.log("success")
         return res.status(200).json({message: "login success" , token: token})
     }

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 const Toprated = () => {
   const [page, setPage] = useState(1);
@@ -18,9 +19,31 @@ const Toprated = () => {
       setPage(page - 1);
     }
   };
+  let token = localStorage.getItem("token")
+  console.log("token toprated", token)
+  if (token) {
+    try {
+      // You'll need to install jwt-decode
+      const decodedToken = jwtDecode(token);
+      console.log("decodedToken", decodedToken)
+      const currentTime = Date.now() / 1000;
+      
+      if (decodedToken.exp < currentTime) {
+        // Token expired, handle accordingly
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+        throw new Error('Token expired');
+      }
+    } catch (error) {
+      // Invalid token
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+      throw new Error('Invalid token');
+    }
+  }
 
   const FetchTopRated = async () => {
-    const data = await axios.get(`https://api.themoviedb.org/3/tv/top_rated?api_key=2548a82cdbcc3c2703fceec99fee278e&page=${page}`);
+    const data = await axios.get(`localhost:5000/api/top-detail?page=${page}`);
     return data;
   };
 
