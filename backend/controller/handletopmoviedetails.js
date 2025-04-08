@@ -1,8 +1,9 @@
 let axios = require('axios');
 async function handletopmoviedetails(req, res) {
     try {
-        let {id} = req.body;
-        let response = await  axios.get(`https://api.themoviedb.org/3/tv/top_rated?api_key=YOUR_API_KEY&page=${page}`);
+        let {page} = req.query;
+        console.log("page", page)
+        let response = await  axios.get(`https://api.themoviedb.org/3/tv/top_rated?api_key=2548a82cdbcc3c2703fceec99fee278e&page=${page}`);
         return res.status(200).json(response.data);
     }
     catch (error) {

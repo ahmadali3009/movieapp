@@ -43,7 +43,13 @@ const Toprated = () => {
   }
 
   const FetchTopRated = async () => {
-    const data = await axios.get(`localhost:5000/api/top-detail?page=${page}`);
+    const data = await axios.get(`http://localhost:5000/api/top-detail?page=${page}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
     return data;
   };
 

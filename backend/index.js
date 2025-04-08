@@ -19,7 +19,7 @@ server.get('/api/test', (req, res) => {  res.json({ message: 'Server is running!
 });
 server.use('/api', signuproute);
 server.use('/api', loginroute);
-server.use('/api' , topmovieroute);
+server.use('/api' , authmiddleware, topmovieroute);
 
 connect("mongodb://127.0.0.1:27017/moviedb");
 server.listen(Port, () => {

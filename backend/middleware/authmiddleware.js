@@ -1,6 +1,7 @@
 let jwt = require('jsonwebtoken');
 let  secretkey = "secretkey";
 function authmiddleware(req, res, next) {
+    console.log("req.headers.authorization", req.headers.authorization)
     if(req.headers.authorization) {
         let token = req.headers.authorization.split(" ")[1];
         let decoded = jwt.verify(token, secretkey);
@@ -8,7 +9,7 @@ function authmiddleware(req, res, next) {
         req.user = decoded;
         next();
     } else {
-        res.status(401).json({ message: "Unauthorized" });
+        res.status(401).json({ message: "Unauthorizeddddd" });
     }
 }
 
