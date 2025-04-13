@@ -3,14 +3,19 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
 import Toprated from './Toprated'
+import HeroBanner from './components/HeroBanner'
+import MovieCard from './components/MovieCard'
 export interface Movie {
   id: number;
   poster_path: string;
   original_title: string;
   title: string;
-  // Add other properties if needed
+  vote_average: number;
+  release_date: string;
+  popularity: number;
+  overview: string;
+  backdrop_path: string;
 }
 function App() {
   let [page , setpage] = useState(1)
@@ -54,7 +59,7 @@ function App() {
       let data = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=2548a82cdbcc3c2703fceec99fee278e&page=${page}`)
       return data
     }
-   
+
     const { data:data, error:dataerror, isLoading:dataisloading } = useQuery({
       queryKey: ['movies' , page],
       queryFn: returndata,
@@ -69,104 +74,161 @@ function App() {
         refetch(); // Call refetch only when searchTerm is updated
       }
     }, [searchTerm, refetch]); // Dependency array ensures refetch runs only when searchTerm changes
-  
+
 
     if (dataisloading) {
-      return <div>Loading movies...</div>;
-    }
-    
-    if (dataerror) {
-      return <div>Error loading movies: {dataerror.message}</div>;
-    }
-    
-    if (searchIsLoading) {
-      return <div>Loading search results...</div>;
-    }
-    
-    if (searchError) {
-      return <div>Error loading search results: {searchError.message}</div>;
-    }
- 
-  
-  return (
-    <>
-     <input
-        type="text"
-        placeholder="Search for movies..."
-        onChange={handlesearch}
-        value={search} // Bind the input to the search state
-
-        className="w-80 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <button
-      onClick={searchbuttton} 
-        className="px-4 py-3 bg-blue-500 text-white font-semibold rounded-r-lg hover:bg-blue-600 transition duration-300"
-      >
-        Search
-      </button>
-      
-      <div className="p-4 max-w-5xl mx-auto">
-  <h1 className="text-2xl font-bold mb-4 text-center">Search Results</h1>
-  <div className="flex space-x-4 overflow-x-auto scrollbar-hide"> {/* Flex container for horizontal layout */}
-   
-    {searchData?.data.results.map((movie: Movie) => (
-       <Link to={`/${movie.id}`}>
-      <div key={movie.id} className="bg-white shadow-md rounded-lg p-4 w-48 flex-shrink-0">
-        <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-          alt={`${movie.original_title} poster`}
-          className="w-full h-60 object-cover rounded"
-        />
-        <h1 className="text-lg font-semibold text-center mt-2 text-black">{movie.original_title}</h1>
-      </div>
-      </Link>
-
-    ))}
-  </div>
-</div>
-
-
-
-
-  <div className="p-4 max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4 text-center">Movie List (Page {page})</h1>
-      {/* Horizontal scrollable movie list */}
-      <div className="flex space-x-4 overflow-x-auto scrollbar-hide">
-        {data && data.data.results.map((movie:Movie) => (
-          <Link to={`/${movie.id}`}>
-          <div key={movie.id} className="bg-white shadow-md rounded-lg p-4 w-48 flex-shrink-0">
-            <img
-              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              alt={`${movie.title} poster`}
-              className="w-full h-60 object-cover rounded"
-            />
-            <h1 className="text-lg font-semibold text-center mt-2 text-black">{movie.title}</h1>
+      return (
+        <div className="loading">
+          <div className="loader"></div>
+          <p>Loading movies...</p>
+          <div className="skeleton-container">
+            {[...Array(5)].map((_, index) => (
+              <div key={index} className="skeleton-loader"></div>
+            ))}
           </div>
-          </Link>
-        ))}
+        </div>
+      );
+    }
+
+    if (dataerror) {
+      return <div className="loading">Error loading movies: {dataerror.message}</div>;
+    }
+
+    if (searchIsLoading) {
+      return (
+        <div className="loading">
+          <div className="loader"></div>
+          <p>Loading search results...</p>
+        </div>
+      );
+    }
+
+    if (searchError) {
+      return <div className="loading">Error loading search results: {searchError.message}</div>;
+    }
+
+
+  // Get featured movies from the data if available
+  const featuredMovies = data?.data.results ? data.data.results.slice(0, 5) : [];
+
+  return (
+    <div className="app-container">
+      {/* Hero Banner */}
+      <HeroBanner movies={featuredMovies} interval={5000} />
+
+      {/* Search Section */}
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search for movies..."
+          onChange={handlesearch}
+          value={search}
+        />
+        <button onClick={searchbuttton}>
+          Search
+        </button>
       </div>
 
-      {/* Pagination controls */}
-      <div className="mt-6 flex justify-between items-center">
-        <h2 className="text-lg font-medium">Page: {page}</h2>
-        <button
-          onClick={handlepreviouspage}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
-        >
-          Previous
-        </button>
-        <button
-          onClick={handlepage}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
-        >
-          Next
-        </button>
-      </div>
+      {/* Search Results Section */}
+      {searchData?.data.results && searchData.data.results.length > 0 && (
+        <section>
+          <h2 className="results-title">Search Results</h2>
+          <div className="movie-scroll">
+            {searchData.data.results.map((movie: Movie) => (
+              <MovieCard
+                key={movie.id}
+                movie={movie}
+                linkPath={`/${movie.id}`}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Movie List Section */}
+      <section>
+        <h2 className="results-title">Popular Movies</h2>
+        <div className="movie-scroll">
+          {data && data.data.results.map((movie: Movie) => (
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              linkPath={`/${movie.id}`}
+            />
+          ))}
+        </div>
+
+        {/* Pagination controls */}
+        <div className="pagination">
+          <h2>Page: {page}</h2>
+          <div>
+            <button
+              onClick={handlepreviouspage}
+              disabled={page <= 1}
+            >
+              Previous
+            </button>
+            <button
+              onClick={handlepage}
+              style={{ marginLeft: '1rem' }}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Top Rated Section */}
+      <Toprated />
+
+      {/* Footer */}
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-section">
+            <h3>About Us</h3>
+            <p>MovieApp is your ultimate destination for discovering movies and TV shows. Explore our vast collection of titles and stay updated with the latest releases.</p>
+            <div className="social-icons">
+              <a href="#" className="social-icon">FB</a>
+              <a href="#" className="social-icon">TW</a>
+              <a href="#" className="social-icon">IG</a>
+            </div>
+          </div>
+
+          <div className="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Movies</a></li>
+              <li><a href="#">TV Shows</a></li>
+              <li><a href="#">Top Rated</a></li>
+              <li><a href="#">Coming Soon</a></li>
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h3>Contact Us</h3>
+            <ul>
+              <li>Email: info@movieapp.com</li>
+              <li>Phone: +1 (123) 456-7890</li>
+              <li>Address: xyz Movie Street, Hollywood, CA</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="footer-bottom">
+          <p>&copy; {new Date().getFullYear()} MovieApp. All rights reserved.</p>
+        </div>
+      </footer>
+
+      {/* Floating Action Button */}
+      <button
+        className="floating-action-button"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        title="Back to top"
+      >
+        ↑
+      </button>
     </div>
-
-    <Toprated></Toprated>
-
-    </>
   )
 }
 
