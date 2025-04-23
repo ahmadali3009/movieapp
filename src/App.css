@@ -1,79 +1,63 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap');
-
 :root {
   --primary: #6366f1;
-  --primary-dark: #4f46e5;
   --secondary: #ec4899;
-  --dark: #1e293b;
-  --light: #f8fafc;
-  --card-bg: rgba(255, 255, 255, 0.8);
-  --gradient-1: linear-gradient(to right, #6366f1, #ec4899);
-  --gradient-2: linear-gradient(to right, #3b82f6, #10b981);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --dark: #0f172a;
+  --light: #f1f5f9;
+  --gradient-1: linear-gradient(45deg, #6366f1, #ec4899);
+  --gradient-2: linear-gradient(45deg, #ec4899, #6366f1);
+  --transition: all 0.3s ease;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --transition: all 0.3s ease;
 }
 
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  font-family: 'Montserrat', sans-serif;
+  background-color: var(--dark);
   color: var(--light);
-  min-height: 100vh;
-  line-height: 1.5;
+  line-height: 1.6;
+  overflow-x: hidden;
 }
 
 #root {
-  width: 100%;
-  max-width: 1400px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 1rem;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-/* App Container */
-.app-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  padding: 1rem;
+  padding: 2rem;
+  text-align: center;
 }
 
 /* Hero Banner */
 .hero-banner {
   position: relative;
   height: 500px;
-  border-radius: 1.5rem;
+  border-radius: 1rem;
   overflow: hidden;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-lg);
 }
 
-.hero-banner-image {
+.hero-banner::before {
+  content: '';
   position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.8) 100%);
+  z-index: 1;
+}
+
+.hero-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 1;
-  transition: opacity 0.5s ease;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%);
-  z-index: 2;
+  transition: transform 0.5s ease;
 }
 
 .hero-content {
@@ -82,154 +66,95 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   padding: 3rem;
-  z-index: 3;
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  align-items: flex-start;
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  font-size: 3rem;
   font-weight: 700;
-  margin: 0;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  margin-bottom: 1rem;
+  max-width: 70%;
   background: var(--gradient-1);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  display: inline-block;
-  max-width: 80%;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .hero-description {
   font-size: 1.25rem;
-  max-width: 60%;
   margin-bottom: 1.5rem;
-  line-height: 1.6;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.hero-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--gradient-1);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 2rem;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.hero-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  max-width: 60%;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .hero-stats {
   display: flex;
-  gap: 1.5rem;
-  margin-top: 1rem;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .hero-stat {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border-radius: 2rem;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  padding: 0.5rem 1rem;
+}
+
+.hero-button {
+  padding: 0.75rem 1.5rem;
+  background: var(--gradient-1);
+  color: white;
+  border: none;
   border-radius: 2rem;
-  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Hero Banner Transitions */
-.fade-in {
-  opacity: 1;
-  transform: translateY(0);
+.hero-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.fade-out {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-/* Hero Pagination */
 .hero-pagination {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
   display: flex;
   gap: 0.5rem;
-  margin-top: 1.5rem;
-  justify-content: center;
+  z-index: 3;
 }
 
 .hero-dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.3);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 .hero-dot.active {
-  background: var(--primary);
+  background: white;
   transform: scale(1.2);
 }
 
-@media (max-width: 768px) {
-  .hero-banner {
-    height: 400px;
-  }
-
-  .hero-content {
-    padding: 2rem;
-  }
-
-  .hero-title {
-    font-size: 2.5rem;
-    max-width: 100%;
-  }
-
-  .hero-description {
-    font-size: 1rem;
-    max-width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-banner {
-    height: 350px;
-  }
-
-  .hero-content {
-    padding: 1.5rem;
-  }
-
-  .hero-title {
-    font-size: 2rem;
-  }
-
-  .hero-stats {
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-}
-
-/* Search Section */
+/* Search Container */
 .search-container {
-  position: relative;
-  max-width: 800px;
-  margin: 2rem auto;
   display: flex;
-  border-radius: 9999px;
+  margin-bottom: 2rem;
+  border-radius: 2rem;
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -237,17 +162,17 @@ h1, h2, h3, h4, h5, h6 {
 
 .search-container input {
   flex: 1;
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1.5rem;
   border: none;
   outline: none;
   background: transparent;
   color: var(--light);
   font-size: 1rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .search-container input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .search-container button {
@@ -262,27 +187,32 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .search-container button:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background: var(--gradient-2);
 }
 
-/* Movie Results Section */
+/* Results Title */
 .results-title {
-  font-size: 1.75rem;
-  margin: 2rem 0 1.5rem;
-  text-align: center;
-  background: var(--gradient-1);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  margin: 0 auto;
-  display: block;
-  max-width: max-content;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  position: relative;
+  padding-left: 1rem;
+  color: var(--light);
 }
 
+.results-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 70%;
+  background: var(--gradient-1);
+  border-radius: 2px;
+}
+
+/* Movie Scroll */
 .movie-scroll {
   display: flex;
   gap: 1.5rem;
@@ -715,26 +645,26 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
     border-radius: 1rem;
   }
-
+  
   .search-container input {
     width: 100%;
     border-radius: 1rem 1rem 0 0;
   }
-
+  
   .search-container button {
     width: 100%;
     border-radius: 0 0 1rem 1rem;
   }
-
+  
   .pagination {
     flex-direction: column;
     gap: 1rem;
   }
-
+  
   .movie-card {
     min-width: 160px;
   }
-
+  
   .movie-card img {
     height: 240px;
   }
@@ -744,16 +674,16 @@ h1, h2, h3, h4, h5, h6 {
   .movie-card {
     min-width: 140px;
   }
-
+  
   .movie-card img {
     height: 200px;
   }
-
+  
   .movie-card h1 {
     font-size: 0.9rem;
     padding: 0.75rem;
   }
-
+  
   .results-title {
     font-size: 1.5rem;
   }

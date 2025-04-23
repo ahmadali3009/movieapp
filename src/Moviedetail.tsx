@@ -21,7 +21,7 @@ const Moviedetail = () => {
         <p>Loading movie details...</p>
       </div>
     );
-
+    
     if (error) return (
       <div className="loading">
         <div className="loader" style={{ borderTopColor: 'red', borderBottomColor: 'red' }}></div>

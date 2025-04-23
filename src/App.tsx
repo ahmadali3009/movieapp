@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import Toprated from './Toprated'
 import HeroBanner from './components/HeroBanner'
 import MovieCard from './components/MovieCard'
+
 export interface Movie {
   id: number;
   poster_path: string;
