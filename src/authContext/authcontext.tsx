@@ -7,9 +7,15 @@ interface User
   email: string;
   password: string;
 }
+interface login
+{
+  email: string;
+  password: string;
+}
 interface AuthContextType{
+  userlogin: login | null,
   user: User | null,
-  login: (userData : User) => Promise<void>
+  login: (userDatalogin : login) => Promise<void>
   signup: (userDate : User) => Promise<void>
   logout: () => void
 }
@@ -19,6 +25,7 @@ export default AuthContext;
 
 export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<User | null>(null);
+  const [userlogin , setuserlogin] = useState<login | null>(null)
   let navigate = useNavigate()
 
   const signup = async (userData:User ) => {
@@ -36,8 +43,8 @@ export const AuthProvider = ({ children }: any) => {
       console.log(error)
     }
   };
-  const login =async (userData: User) => {
-    let response = await axios.post("http://localhost:5000/api/login", userData)
+  const login =async (userDatalogin: login) => {
+    let response = await axios.post("http://localhost:5000/api/login", userDatalogin)
     if(response)
       {
         alert("login success")
@@ -45,7 +52,7 @@ export const AuthProvider = ({ children }: any) => {
     console.log("response", response)
     localStorage.setItem("token", response.data.token)
     navigate("/" , {replace: true})
-    setUser(userData);
+    setuserlogin(userDatalogin);
   };
 
   const logout = () => {
@@ -53,7 +60,7 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, signup }}>
+    <AuthContext.Provider value={{userlogin, user, login, logout, signup }}>
       {children}
     </AuthContext.Provider>
   );
