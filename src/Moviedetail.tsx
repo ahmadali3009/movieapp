@@ -1,7 +1,7 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import Navbar from './components/Navbar';
 
 const Moviedetail = () => {
     let { id } = useParams();
@@ -21,7 +21,7 @@ const Moviedetail = () => {
         <p>Loading movie details...</p>
       </div>
     );
-    
+
     if (error) return (
       <div className="loading">
         <div className="loader" style={{ borderTopColor: 'red', borderBottomColor: 'red' }}></div>
@@ -31,6 +31,7 @@ const Moviedetail = () => {
 
     return (
         <div className="app-container">
+            <Navbar />
             <div className="movie-detail-container" style={{
                 background: 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(10px)',

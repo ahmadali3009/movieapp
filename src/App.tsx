@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import Toprated from './Toprated'
 import HeroBanner from './components/HeroBanner'
 import MovieCard from './components/MovieCard'
+import Navbar from './components/Navbar'
 
 export interface Movie {
   id: number;
@@ -114,6 +115,9 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* Navbar */}
+      <Navbar />
+
       {/* Hero Banner */}
       <HeroBanner movies={featuredMovies} interval={5000} />
 

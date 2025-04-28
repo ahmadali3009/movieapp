@@ -14,6 +14,7 @@ import Signup from "./components/signup.js";
 import { AuthProvider } from './authContext/authcontext.tsx';
 import Login from './components/login.tsx';
 import ProtectedRoutes from './authContext/ProtectedRoutes.tsx';
+import About from './components/About.tsx';
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -43,6 +44,11 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <AuthProvider><Login /></AuthProvider>
+    ,
+  },
+  {
+    path: "/about",
+    element: <AuthProvider><About /></AuthProvider>
     ,
   },
 ])

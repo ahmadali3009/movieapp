@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router-dom';
+import Navbar from './components/Navbar';
 
 const MovieDetail2 = () => {
   const location = useLocation();
@@ -15,6 +16,7 @@ const MovieDetail2 = () => {
 
   return (
     <div className="app-container">
+      <Navbar />
       <div className="movie-detail-container" style={{
         background: 'rgba(255, 255, 255, 0.05)',
         backdropFilter: 'blur(10px)',

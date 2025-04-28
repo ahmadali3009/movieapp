@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # Frontend React application
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - API_URL=http://backend:5000
+      - APP_ENV=production
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Backend API service (uncomment and configure as needed)
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     - NODE_ENV=production
+  #     - DATABASE_URL=mongodb://db:27017/movieapp
+  #   depends_on:
+  #     - db
+  #   restart: unless-stopped
+  #   networks:
+  #     - app-network
+
+  # Database service (uncomment and configure as needed)
+  # db:
+  #   image: mongo:latest
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #   ports:
+  #     - "27017:27017"
+  #   restart: unless-stopped
+  #   networks:
+  #     - app-network
+
+# Define a network for the services
+networks:
+  app-network:
+    driver: bridge
+
+# Define volumes for persistent data (uncomment as needed)
+# volumes:
+#   mongodb_data:
