@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: any) => {
 
   const signup = async (userData:User ) => {
     try {
-      let response = await axios.post("http://localhost:5000/api/signup", userData)
+      let response = await axios.post("http://backend:5000/api/signup", userData)
       console.log("response", response)
       if(response.data.message === "user created")
       {
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: any) => {
     }
   };
   const login =async (userDatalogin: login) => {
-    let response = await axios.post("http://localhost:5000/api/login", userDatalogin)
+    let response = await axios.post("http://backend:5000/api/login", userDatalogin)
     if(response)
       {
         alert("login success")
