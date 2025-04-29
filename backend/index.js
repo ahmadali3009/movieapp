@@ -1,8 +1,11 @@
+// Load environment variables
+require('dotenv').config();
+
 const express = require('express');
 const server = express();
 const cors = require('cors');
 const axios = require('axios');
-const Port = 5000;
+const Port = process.env.PORT || 5000;
 const connect = require('./connection');
 const signuproute = require('./routes/signup');
 const loginroute = require('./routes/login');
@@ -21,7 +24,9 @@ server.use('/api', signuproute);
 server.use('/api', loginroute);
 server.use('/api' , authmiddleware, topmovieroute);
 
-connect("mongodb://127.0.0.1:27017/moviedb");
+// Use environment variable for MongoDB connection or fallback to default
+const dbUrl = process.env.MONGODB_URI || "mongodb://db:27017/movieapp";
+connect(dbUrl);
 server.listen(Port, () => {
   console.log(`Server running at http://localhost:${Port}`);
 });

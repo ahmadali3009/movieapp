@@ -1,5 +1,5 @@
 # Use Node.js as the base image
-FROM node:18-alpine as build
+FROM node:18-alpine AS build
 
 # Set working directory
 WORKDIR /app
@@ -17,17 +17,13 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM nginx:stable-alpine as production
+FROM nginx:stable-alpine AS production
 
 # Copy built assets from the build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy custom nginx config if needed
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Add runtime configuration for environment variables if needed
-COPY ./env.sh /docker-entrypoint.d/40-env.sh
-RUN chmod +x /docker-entrypoint.d/40-env.sh
+# Copy custom nginx config for React Router
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port
 EXPOSE 80

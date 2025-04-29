@@ -1,7 +1,8 @@
 let jwt = require('jsonwebtoken');
-let secretkey = "secretkey";
+
 function generateToken (data) {
-    let token = jwt.sign(data , secretkey , {expiresIn: "24h"});
+    const secretKey = process.env.JWT_SECRET || "secretkey@123";
+    let token = jwt.sign(data, secretKey, {expiresIn: "24h"});
     return token;
 }
 module.exports = {generateToken};
