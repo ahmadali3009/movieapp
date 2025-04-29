@@ -5,7 +5,7 @@ function authmiddleware(req, res, next) {
     if(req.headers.authorization) {
         try {
             let token = req.headers.authorization.split(" ")[1];
-            const secretKey = process.env.JWT_SECRET || "default_secret_key";
+            const secretKey = process.env.JWT_SECRET || "secretkey@123";
             let decoded = jwt.verify(token, secretKey);
             console.log("decoded", decoded)
             req.user = decoded;
