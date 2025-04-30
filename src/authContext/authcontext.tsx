@@ -30,7 +30,9 @@ export const AuthProvider = ({ children }: any) => {
 
   const signup = async (userData:User ) => {
     try {
-      let response = await axios.post("http://localhost:5000/api/signup", userData)
+      // Get API URL from environment variable or use localhost as fallback
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      let response = await axios.post(`${apiUrl}/api/signup`, userData)
       console.log("response", response)
       if(response.data.message === "user created")
       {
@@ -44,7 +46,9 @@ export const AuthProvider = ({ children }: any) => {
     }
   };
   const login =async (userDatalogin: login) => {
-    let response = await axios.post("http://localhost:5000/api/login", userDatalogin)
+    // Get API URL from environment variable or use localhost as fallback
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    let response = await axios.post(`${apiUrl}/api/login`, userDatalogin)
     if(response)
       {
         alert("login success")

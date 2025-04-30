@@ -43,7 +43,9 @@ const Toprated = () => {
   }
 
   const FetchTopRated = async () => {
-    const data = await axios.get(`http://localhost:5000/api/top-detail?page=${page}`,
+    // Get API URL from environment variable or use localhost as fallback
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const data = await axios.get(`${apiUrl}/api/top-detail?page=${page}`,
       {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
