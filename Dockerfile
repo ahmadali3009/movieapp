@@ -1,32 +1,17 @@
 # Use Node.js as the base image
-FROM node:18-alpine AS build
+FROM node:18-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy backend files only
+COPY backend/ ./
 
 # Install dependencies
-RUN npm ci
-
-# Copy all files
-COPY . .
-
-# Build the app
-RUN npm run build
-
-# Production stage
-FROM nginx:stable-alpine AS production
-
-# Copy built assets from the build stage
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Copy custom nginx config for React Router
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+RUN npm install
 
 # Expose port
-EXPOSE 80
+EXPOSE 5000
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start the server
+CMD ["node", "index.js"]

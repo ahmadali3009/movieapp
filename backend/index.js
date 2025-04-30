@@ -14,12 +14,18 @@ const jwt = require('jsonwebtoken');
 const authmiddleware = require('./middleware/authmiddleware');
 
 // Middleware
-server.use(cors());
-server.use(express.json());
+// Configure CORS to allow requests from your frontend domain
+server.use(cors({
+  origin: ['http://localhost:5173', 'https://your-frontend-domain.onrender.com'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 // Test route
 server.get('/api/test', (req, res) => {  res.json({ message: 'Server is running!' });
 });
+
 server.use('/api', signuproute);
 server.use('/api', loginroute);
 server.use('/api' , authmiddleware, topmovieroute);
