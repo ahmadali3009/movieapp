@@ -2,14 +2,18 @@ const e = require('cors');
 let usersignup = require('../model/signup');
 const jwt = require('jsonwebtoken');
 const { generateToken } = require('../service/security');
+const { validateLoginData } = require('../utils/validation');
+
 async function handleloginuser(req, res) {
     try{
         let {email , password} = req.body;
         console.log("email" , email)
         console.log("password" , password)
-        if(!email || !password)
-        {
-            return res.status(400).json({message: "missing required fields"})
+
+        // Validate login data
+        const validation = validateLoginData({ email, password });
+        if (!validation.isValid) {
+            return res.status(400).json({ message: validation.message });
         }
         let user = await usersignup.findOne({email: email})
         if(!user)

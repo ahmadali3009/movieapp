@@ -7,19 +7,35 @@ const Signup = () => {
   let [input, setInput] = useState({
     username: "",
     email: "",
-    password: "" 
+    password: ""
   })
 
+  // Validation state
+  const [isEmailValid, setIsEmailValid] = useState(false);
+
+  // Email validation function
+  const validateEmail = (email: string) => {
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegex.test(email);
+  };
+
   let handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput((prev) => ({...prev, [e.target.name]: e.target.value}))
+    const { name, value } = e.target;
+    setInput((prev) => ({...prev, [name]: value}))
+
+    // Validate email on change
+    if (name === 'email') {
+      setIsEmailValid(validateEmail(value));
+    }
   }
-  let handlesubmit =  (e:any) => {
+
+  let handlesubmit = (e:any) => {
     e.preventDefault()
     auth?.signup(input)
   }
 
   let auth = useContext(AuthContext)
-  
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left Panel - Decorative */}
@@ -41,6 +57,20 @@ const Signup = () => {
             <p className="mt-2 text-gray-600">Join our community of movie enthusiasts</p>
           </div>
 
+          {/* Show error message if authentication failed */}
+          {auth?.authStatus?.iserror && (
+            <div className="bg-red-50 text-red-600 p-4 rounded-md border-l-4 border-red-500">
+              {auth.authStatus.message}
+            </div>
+          )}
+
+          {/* Show success message if needed */}
+          {auth?.authStatus?.issuccess && (
+            <div className="bg-green-50 text-green-600 p-4 rounded-md border-l-4 border-green-500">
+              {auth.authStatus.message}
+            </div>
+          )}
+
           <form className="mt-8 space-y-6">
             <div className="space-y-5">
               <div>
@@ -54,7 +84,7 @@ const Signup = () => {
                     onChange={handlechange}
                     name="username"
                   />
-                  <label 
+                  <label
                     htmlFor="username"
                     className="absolute left-4 -top-5 text-sm text-gray-600 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 transition-all peer-focus:-top-5 peer-focus:text-sm peer-focus:text-purple-500"
                   >
@@ -74,7 +104,7 @@ const Signup = () => {
                     onChange={handlechange}
                     name="email"
                   />
-                  <label 
+                  <label
                     htmlFor="email"
                     className="absolute left-4 -top-5 text-sm text-gray-600 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 transition-all peer-focus:-top-5 peer-focus:text-sm peer-focus:text-purple-500"
                   >
@@ -94,7 +124,7 @@ const Signup = () => {
                     onChange={handlechange}
                     name="password"
                   />
-                  <label 
+                  <label
                     htmlFor="password"
                     className="absolute left-4 -top-5 text-sm text-gray-600 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 transition-all peer-focus:-top-5 peer-focus:text-sm peer-focus:text-purple-500"
                   >
@@ -106,9 +136,11 @@ const Signup = () => {
 
             <button
               onClick={handlesubmit}
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-full hover:opacity-90 transition-opacity font-medium text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              className={`w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-full hover:opacity-90 font-medium text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ${
+                !isEmailValid || !input.password || !input.username || auth?.authStatus?.isloading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
             >
-              Sign Up
+              {auth?.authStatus?.isloading ? 'Creating Account...' : 'Sign Up'}
             </button>
           </form>
 

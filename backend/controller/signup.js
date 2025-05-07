@@ -1,14 +1,16 @@
 let usersignup = require('../model/signup');
-
+const { validateSignupData } = require('../utils/validation');
 
 async function handlecreateuser(req, res) {
     try {
-        
-        let { email, password, username } = req.body
-        // Input validation
-        if (!email || !password || !username) {
-            return res.status(400).json({ message: "Missing required fields" });
+        let { email, password, username } = req.body;
+
+        // Validate user data
+        const validation = validateSignupData({ email, password, username });
+        if (!validation.isValid) {
+            return res.status(400).json({ message: validation.message });
         }
+
         // user exist
         let userexist = await usersignup.findOne({ email })
         if (userexist) {

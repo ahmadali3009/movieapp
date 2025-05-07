@@ -53,22 +53,51 @@ export const AuthProvider = ({ children }: any) => {
     try {
       // Get API URL from environment variable or use localhost as fallback
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+      // Set loading state
+      setauthstatus({
+        isloading: true,
+        iserror: false,
+        issuccess: false,
+        message: "Creating account...",
+      });
+
       let response = await axios.post(`${apiUrl}/api/signup`, userData)
       console.log("response", response)
-      if(response.data.message === "user created")
-      {
+
+      if(response.data.message === "user created") {
         console.log("user created")
-        alert("user created")
         setUser(userData);
+        setauthstatus({
+          isloading: false,
+          iserror: false,
+          issuccess: true,
+          message: "Account created successfully!",
+        });
+        // Navigate to login page after successful signup
+        navigate("/login", {replace: true});
+      } else {
+        setauthstatus({
+          isloading: false,
+          iserror: true,
+          issuccess: false,
+          message: "Failed to create account",
+        });
       }
     }
-    catch (error) {
-      console.log(error)
+    catch (error: any) {
+      console.log(error);
+      setauthstatus({
+        isloading: false,
+        iserror: true,
+        issuccess: false,
+        message: error.response?.data?.message || "Failed to create account",
+      });
     }
   };
   const login =async (userDatalogin: login) => {
     // Get API URL from environment variable or use localhost as fallback
-    try{  
+    try{
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     setauthstatus({
       isloading: true,
