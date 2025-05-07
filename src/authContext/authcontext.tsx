@@ -18,7 +18,15 @@ interface AuthContextType{
   login: (userDatalogin : login) => Promise<void>
   signup: (userDate : User) => Promise<void>
   logout: () => void
+  authStatus:{
+    isloading: boolean;
+    iserror: boolean;
+    issuccess: boolean;
+    message: string | null;
+  }
+  clearAuthStatus: () => void;
 }
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export default AuthContext;
@@ -26,8 +34,21 @@ export default AuthContext;
 export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<User | null>(null);
   const [userlogin , setuserlogin] = useState<login | null>(null)
+  let [authStatus , setauthstatus] = useState({
+    isloading: false,
+    iserror: false,
+    issuccess: false,
+    message: "",
+  })
   let navigate = useNavigate()
-
+  const clearAuthStatus = () => {
+    setauthstatus({
+      isloading: false,
+      issuccess: false,
+      iserror: false,
+      message: ""
+    });
+  };
   const signup = async (userData:User ) => {
     try {
       // Get API URL from environment variable or use localhost as fallback
@@ -47,24 +68,47 @@ export const AuthProvider = ({ children }: any) => {
   };
   const login =async (userDatalogin: login) => {
     // Get API URL from environment variable or use localhost as fallback
+    try{  
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    setauthstatus({
+      isloading: true,
+      iserror: false,
+      issuccess: false,
+      message: "logging in...",
+    })
     let response = await axios.post(`${apiUrl}/api/login`, userDatalogin)
-    if(response)
-      {
-        alert("login success")
-      }
+    // if(response)
+    //   {
+    //     alert("login success")
+    //   }
     console.log("response", response)
     localStorage.setItem("token", response.data.token)
     navigate("/" , {replace: true})
     setuserlogin(userDatalogin);
+    setauthstatus({
+      isloading: false,
+      iserror: false,
+      issuccess: true,
+      message: "login success",
+    })
+  }
+  catch (error) {
+    setauthstatus({
+      isloading: false,
+      iserror: true,
+      issuccess: false,
+      message: "login failed",
+    })
+  }
   };
+
 
   const logout = () => {
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{userlogin, user, login, logout, signup }}>
+    <AuthContext.Provider value={{userlogin, user, login, logout, signup , authStatus, clearAuthStatus }}>
       {children}
     </AuthContext.Provider>
   );

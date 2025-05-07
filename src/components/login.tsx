@@ -1,30 +1,47 @@
-import { useContext, useState } from "react"
-import AuthContext from "../authContext/authcontext"
-import { Link } from "react-router-dom"
+import { useState, useContext, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import AuthContext from '../authContext/authcontext';
 
 const Login = () => {
-  let [input, setInput] = useState({
-    email: "",
-    password: "" 
-  })
+  // Get auth context
+  const auth = useContext(AuthContext);
 
-  let handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput((prev) => ({...prev, [e.target.name]: e.target.value}))
-  }
-  let auth = useContext(AuthContext)
+  // Form state
+  const [input, setInput] = useState({
+    email: '',
+    password: ''
+  });
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    auth?.login(input)
-  }
+  // Handle input changes
+  const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput((prev) => ({...prev, [e.target.name]: e.target.value}));
+  };
+
+  // Handle form submission
+  const handlesubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    auth?.login({
+      email: input.email,
+      password: input.password
+    });
+  };
+
+  // Clear auth status when component unmounts
+  useEffect(() => {
+    return () => {
+      if (auth?.clearAuthStatus) {
+        auth.clearAuthStatus();
+      }
+    };
+  }, [auth]);
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left Panel - Decorative */}
-      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-purple-500 to-pink-500 p-12 flex-col justify-between">
+      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-blue-500 to-purple-600 p-12 flex-col justify-between">
         <div className="text-white">
-          <h1 className="text-4xl font-bold mb-4">Welcome Back!</h1>
-          <p className="text-lg opacity-80">Continue your movie journey with us.</p>
+          <h1 className="text-4xl font-bold mb-4">Welcome Back</h1>
+          <p className="text-lg opacity-80">Sign in to continue your movie journey.</p>
         </div>
         <div className="text-white/70 text-sm">
           © 2024 MovieApp. All rights reserved.
@@ -39,7 +56,21 @@ const Login = () => {
             <p className="mt-2 text-gray-600">Access your movie collection</p>
           </div>
 
-          <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+          {/* Show error message if authentication failed */}
+          {auth?.authStatus?.iserror && (
+            <div className="bg-red-50 text-red-600 p-4 rounded-md border-l-4 border-red-500">
+              {auth.authStatus.message}
+            </div>
+          )}
+
+          {/* Show success message if needed */}
+          {auth?.authStatus?.issuccess && (
+            <div className="bg-green-50 text-green-600 p-4 rounded-md border-l-4 border-green-500">
+              {auth.authStatus.message}
+            </div>
+          )}
+
+          <form className="mt-8 space-y-6">
             <div className="space-y-5">
               <div>
                 <div className="relative">
@@ -51,9 +82,8 @@ const Login = () => {
                     value={input.email}
                     onChange={handlechange}
                     name="email"
-                    required
                   />
-                  <label 
+                  <label
                     htmlFor="email"
                     className="absolute left-4 -top-5 text-sm text-gray-600 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 transition-all peer-focus:-top-5 peer-focus:text-sm peer-focus:text-purple-500"
                   >
@@ -72,9 +102,8 @@ const Login = () => {
                     value={input.password}
                     onChange={handlechange}
                     name="password"
-                    required
                   />
-                  <label 
+                  <label
                     htmlFor="password"
                     className="absolute left-4 -top-5 text-sm text-gray-600 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 transition-all peer-focus:-top-5 peer-focus:text-sm peer-focus:text-purple-500"
                   >
@@ -90,7 +119,7 @@ const Login = () => {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-purple-500 focus:ring-purple-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600">
                   Remember me
@@ -98,17 +127,20 @@ const Login = () => {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="text-purple-500 hover:text-purple-700 font-medium">
+                <a href="#" className="font-medium text-purple-600 hover:text-purple-500">
                   Forgot password?
                 </a>
               </div>
             </div>
 
             <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-full hover:opacity-90 font-medium text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              onClick={handlesubmit}
+              disabled={auth?.authStatus?.isloading}
+              className={`w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-full hover:opacity-90 font-medium text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ${
+                auth?.authStatus?.isloading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
             >
-              Sign In
+              {auth?.authStatus?.isloading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
@@ -123,7 +155,7 @@ const Login = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

@@ -31,7 +31,7 @@ server.use('/api', loginroute);
 server.use('/api' , authmiddleware, topmovieroute);
 
 // Use environment variable for MongoDB connection or fallback to default
-const dbUrl = process.env.MONGODB_URI || "mongodb://db:27017/movieapp";
+const dbUrl = process.env.MONGODB_URI || "mongodb://localhost:27017/movieapp";
 connect(dbUrl);
 server.listen(Port, () => {
   console.log(`Server running at http://localhost:${Port}`);
