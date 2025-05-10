@@ -16,18 +16,16 @@ interface MovieCardProps {
 const MovieCard = ({ movie, linkPath, state }: MovieCardProps) => {
   // Determine which title to use (movies have title/original_title, TV shows have name)
   const title = movie.title || movie.original_title || movie.name || 'Unknown Title';
-  
+
   return (
     <Link to={linkPath} state={state}>
       <div className="movie-card">
         <div className="movie-rating-badge">{movie.vote_average?.toFixed(1)}</div>
         <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+          src={movie.poster_path
+            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+            : 'https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-38-picture-grey-c2ebdbb057f2a7614185931650f8cee23fa137b93812ccb132b9df511df1cfac.svg'}
           alt={`${title} poster`}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = 'https://via.placeholder.com/300x450?text=No+Image';
-          }}
         />
         <div className="movie-card-overlay">
           <button className="view-details-btn">View Details</button>

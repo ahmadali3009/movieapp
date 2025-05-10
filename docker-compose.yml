@@ -9,6 +9,7 @@ services:
     volumes:
       - ./dist:/usr/share/nginx/html
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./env.sh:/docker-entrypoint.d/40-env.sh
     environment:
       - API_URL=http://localhost:5000
       - BACKEND_URL=http://localhost:5000
@@ -16,6 +17,8 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+    # Add this command to ensure proper permissions and execution
+    command: sh -c "chmod +x /docker-entrypoint.d/40-env.sh && nginx -g 'daemon off;'"
 
   # Backend API service
   backend:
@@ -56,3 +59,4 @@ networks:
 # Define volumes for persistent data
 volumes:
   mongodb_data:
+

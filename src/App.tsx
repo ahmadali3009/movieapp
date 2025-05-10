@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import {  useContext, useEffect, useState } from 'react'
 
 import './App.css'
 import axios from 'axios'
@@ -7,7 +7,7 @@ import Toprated from './Toprated'
 import HeroBanner from './components/HeroBanner'
 import MovieCard from './components/MovieCard'
 import Navbar from './components/Navbar'
-
+import { LLMsContext } from './LLMsContext/LLmscontext.tsx';
 export interface Movie {
   id: number;
   poster_path: string;
@@ -23,6 +23,7 @@ function App() {
   let [page , setpage] = useState(1)
   let [search , setsearch] = useState("")
   let [searchTerm , setsearchTerm] = useState("")
+  let llms = useContext(LLMsContext)
   let searchFetch = async()=>
     {
       let searchdata = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=2548a82cdbcc3c2703fceec99fee278e&query=${searchTerm}`)
@@ -32,6 +33,7 @@ function App() {
   let searchbuttton =  ()=>
     {
       setsearchTerm(search)
+      llms?.LLMssugetion(search)
       // refetch();
 
     }
@@ -73,6 +75,7 @@ function App() {
     });
     useEffect(() => {
       if (searchTerm) {
+        console.log("suggestioon form llms",llms?.responsesuggestion)
         refetch(); // Call refetch only when searchTerm is updated
       }
     }, [searchTerm, refetch]); // Dependency array ensures refetch runs only when searchTerm changes
@@ -134,6 +137,34 @@ function App() {
         </button>
       </div>
 
+      {/* LLM Suggestions Section */}
+      {llms?.isLoading && (
+        <div className="loading">
+          <div className="loader"></div>
+          <p>Getting AI movie suggestions...</p>
+        </div>
+      )}
+
+      {llms?.error && (
+        <div className="error-message">
+          <p>Error getting AI suggestions: {llms.error}</p>
+        </div>
+      )}
+
+      {llms?.responsesuggestion && llms.responsesuggestion.length > 0 && (
+        <section>
+          <h2 className="results-title">AI Recommended Similar Movies</h2>
+          <div className="llm-suggestions">
+            {llms.responsesuggestion.map((suggestion, index) => (
+              <div key={index} className="llm-suggestion-card">
+                <h3 className="llm-suggestion-title">{suggestion.title}</h3>
+                <p className="llm-suggestion-reason">{suggestion.reason}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Search Results Section */}
       {searchData?.data.results && searchData.data.results.length > 0 && (
         <section>
@@ -162,6 +193,11 @@ function App() {
             />
           ))}
         </div>
+
+          <>
+
+</>
+
 
         {/* Pagination controls */}
         <div className="pagination">

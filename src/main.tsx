@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import {
-  createBrowserRouter,
+  createHashRouter,
   RouterProvider,
 } from "react-router-dom";
 
@@ -14,25 +14,26 @@ import { AuthProvider } from './authContext/authcontext.tsx';
 import Login from './components/login.tsx';
 import ProtectedRoutes from './authContext/ProtectedRoutes.tsx';
 import About from './components/About.tsx';
+import { LLMsProvider } from './LLMsContext/LLmscontext.tsx';
 
 const queryClient = new QueryClient();
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
-    element: <AuthProvider>
-      <ProtectedRoutes><App /></ProtectedRoutes></AuthProvider>
+    element: <LLMsProvider><AuthProvider>
+      <ProtectedRoutes><App /></ProtectedRoutes></AuthProvider></LLMsProvider>
     ,
   },
   {
     path: "/:id",
-    element: <AuthProvider>
-      <ProtectedRoutes><Moviedetail /></ProtectedRoutes></AuthProvider>
+    element: <LLMsProvider><AuthProvider>
+      <ProtectedRoutes><Moviedetail /></ProtectedRoutes></AuthProvider></LLMsProvider>
     ,
   },
   {
     path: "/top-detail",
-    element: <AuthProvider>
-      <ProtectedRoutes><MovieDetail2 /></ProtectedRoutes></AuthProvider>
+    element: <LLMsProvider><AuthProvider>
+      <ProtectedRoutes><MovieDetail2 /></ProtectedRoutes></AuthProvider></LLMsProvider>
     ,
   },
   {
@@ -56,3 +57,4 @@ createRoot(document.getElementById('root')!).render(
     <RouterProvider router={router} />
   </QueryClientProvider>
 )
+
