@@ -36,9 +36,12 @@ const Navbar = () => {
   return (
     <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
-          <span className="logo-text">Movie<span className="logo-accent">App</span></span>
-        </Link>
+        <div className="logo">
+          <Link to="/" className="flex items-center">
+            <span className="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">CineVerse</span>
+            <span className="ml-1 text-sm font-semibold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">AI</span>
+          </Link>
+        </div>
 
         {/* Desktop Navigation */}
         <ul className="nav-menu">
@@ -113,3 +116,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
