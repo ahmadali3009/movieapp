@@ -1,5 +1,6 @@
 let usersignup = require('../model/signup');
 const { validateSignupData } = require('../utils/validation');
+const bcrypt = require('bcrypt');
 
 async function handlecreateuser(req, res) {
     try {
@@ -11,16 +12,20 @@ async function handlecreateuser(req, res) {
             return res.status(400).json({ message: validation.message });
         }
 
-        // user exist
+        // Check if user already exists
         let userexist = await usersignup.findOne({ email })
         if (userexist) {
             return res.status(400).json({ message: "user already exist" })
-
         }
-        // create user
+
+        // Hash password with bcrypt
+        const saltRounds = 12;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // Create user with hashed password
         let user = await usersignup.create({
             email,
-            password,
+            password: hashedPassword, // Store hashed password
             username
         })
 
@@ -30,6 +35,7 @@ async function handlecreateuser(req, res) {
         return  res.status(201).json({ message: "user created" })
     }
     catch (error) {
+       console.error('Signup error:', error);
        return res.status(500).json({ message: error.message })
     }
 }
