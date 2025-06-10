@@ -4,6 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const server = express();
 const cors = require('cors');
+const helmet = require('helmet');
 const axios = require('axios');
 const Port = process.env.PORT || 5000;
 const connect = require('./connection');
@@ -14,13 +15,18 @@ const jwt = require('jsonwebtoken');
 const authmiddleware = require('./middleware/authmiddleware');
 
 // Middleware
+// Security headers with Helmet (Basic protection)
+server.use(helmet());
+
 // Configure CORS to allow requests from your frontend domain
 server.use(cors({
   origin: ['http://localhost:5173', 'https://movieapp-1-9vz5.onrender.com'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-}));server.use(express.json());
+}));
+
+server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 // Test route
 server.get('/api/test', (req, res) => {  res.json({ message: 'Server is running!' });
