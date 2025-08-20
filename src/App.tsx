@@ -1,4 +1,4 @@
-import {  useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import './App.css'
@@ -9,6 +9,7 @@ import HeroBanner from './components/HeroBanner'
 import MovieCard from './components/MovieCard'
 import Navbar from './components/Navbar'
 import { LLMsContext } from './LLMsContext/LLmscontext.tsx';
+import axiosInstance from './axiosinstance/Axiosinstance.ts'
 export interface Movie {
   id: number;
   poster_path: string;
@@ -21,97 +22,91 @@ export interface Movie {
   backdrop_path: string;
 }
 function App() {
-  let [page , setpage] = useState(1)
-  let [search , setsearch] = useState("")
-  let [searchTerm , setsearchTerm] = useState("")
+  let [page, setpage] = useState(1)
+  let [search, setsearch] = useState("")
+  let [searchTerm, setsearchTerm] = useState("")
   let llms = useContext(LLMsContext)
-  let searchFetch = async()=>
-    {
-      let searchdata = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=2548a82cdbcc3c2703fceec99fee278e&query=${searchTerm}`)
-      console.log("searchdata",searchdata)
-      return searchdata
+ 
+  let searchFetch = async () => {
+    let searchdata = await axiosInstance.get(`https://api.themoviedb.org/3/search/movie?api_key=2548a82cdbcc3c2703fceec99fee278e&query=${searchTerm}`)
+    console.log("searchdata", searchdata)
+    return searchdata
+  }
+  let searchbuttton = () => {
+    setsearchTerm(search)
+    llms?.LLMssugetion(search)
+    // refetch();
+
+  }
+
+
+  // let handlesearch = (value: string) => {
+  //   console.log("value", value)
+  //   setsearch(value)
+
+  // }
+  let handlepage = () => {
+    let nextpage = data?.data.page + 1
+    setpage(nextpage)
+    console.log(nextpage)
+  }
+  let handlepreviouspage = () => {
+    let nextpage = data?.data.page - 1
+    setpage(nextpage)
+    console.log(nextpage)
+  }
+  let returndata = async () => {
+    let data = await axiosInstance.get(`https://api.themoviedb.org/3/discover/movie?api_key=2548a82cdbcc3c2703fceec99fee278e&page=${page}`)
+    return data
+  }
+
+  const { data: data, error: dataerror, isLoading: dataisloading } = useQuery({
+    queryKey: ['movies', page],
+    queryFn: returndata,
+  });
+  const { data: searchData, error: searchError, isLoading: searchIsLoading, refetch } = useQuery({
+    queryKey: ['search', searchTerm], // Use searchTerm as key
+    queryFn: searchFetch,
+    enabled: !!searchTerm, // Disable automatic fetching
+  });
+  useEffect(() => {
+    if (searchTerm) {
+      console.log("suggestioon form llms", llms?.responsesuggestion)
+      refetch(); // Call refetch only when searchTerm is updated
     }
-  let searchbuttton =  ()=>
-    {
-      setsearchTerm(search)
-      llms?.LLMssugetion(search)
-      // refetch();
-
-    }
+  }, [searchTerm, refetch]); // Dependency array ensures refetch runs only when searchTerm changes
 
 
-  let handlesearch = (e:any)=>
-    {
-      let value =  e.target.value
-      console.log("value",value)
-      setsearch(value)
-
-    }
-  let handlepage = ()=>
-    {
-      let nextpage = data?.data.page + 1
-      setpage(nextpage)
-      console.log(nextpage)
-    }
-    let handlepreviouspage = ()=>
-      {
-        let nextpage = data?.data.page - 1
-        setpage(nextpage)
-        console.log(nextpage)
-      }
-  let returndata = async ()=>
-    {
-      let data = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=2548a82cdbcc3c2703fceec99fee278e&page=${page}`)
-      return data
-    }
-
-    const { data:data, error:dataerror, isLoading:dataisloading } = useQuery({
-      queryKey: ['movies' , page],
-      queryFn: returndata,
-    });
-    const { data: searchData, error: searchError, isLoading: searchIsLoading , refetch } = useQuery({
-      queryKey: ['search', searchTerm], // Use searchTerm as key
-      queryFn: searchFetch,
-      enabled: !!searchTerm, // Disable automatic fetching
-    });
-    useEffect(() => {
-      if (searchTerm) {
-        console.log("suggestioon form llms",llms?.responsesuggestion)
-        refetch(); // Call refetch only when searchTerm is updated
-      }
-    }, [searchTerm, refetch]); // Dependency array ensures refetch runs only when searchTerm changes
-
-
-    if (dataisloading) {
-      return (
-        <div className="loading">
-          <div className="loader"></div>
-          <p>Loading movies...</p>
-          <div className="skeleton-container">
-            {[...Array(5)].map((_, index) => (
-              <div key={index} className="skeleton-loader"></div>
-            ))}
-          </div>
+  if (dataisloading) {
+    return (
+      <div className="loading">
+        <div className="loader"></div>
+        <p>Loading movies...</p>
+        <div className="skeleton-container">
+          {[...Array(5)].map((_, index) => (
+            <div key={index} className="skeleton-loader"></div>
+          ))}
         </div>
-      );
-    }
+      </div>
+    );
+  }
 
-    if (dataerror) {
-      return <div className="loading">Error loading movies: {dataerror.message}</div>;
-    }
+  if (dataerror) {
+    return <div className="loading">Error loading movies: {dataerror.message}</div>;
+  }
 
-    if (searchIsLoading) {
-      return (
-        <div className="loading">
-          <div className="loader"></div>
-          <p>Loading search results...</p>
-        </div>
-      );
-    }
+  if (searchIsLoading) {
+    return (
+      <div className="loading">
+        <div className="loader"></div>
+        <p>Loading search results...</p>
+      </div>
+    );
+  }
 
-    if (searchError) {
-      return <div className="loading">Error loading search results: {searchError.message}</div>;
-    }
+  if (searchError) {
+    return <div className="loading">Error loading search results: {searchError.message}</div>;
+  }
 
 
   // Get featured movies from the data if available
@@ -131,7 +126,7 @@ function App() {
           <input
             type="text"
             placeholder="Search for movies or ask for recommendations..."
-            onChange={handlesearch}
+            onChange={(e) => setsearch(e.target.value)}
             value={search}
             onKeyPress={(e) => e.key === 'Enter' && searchbuttton()}
           />
@@ -156,10 +151,10 @@ function App() {
                 <div className="ai-recommendation-poster-skeleton"></div>
                 <div className="ai-recommendation-content-skeleton">
                   <div className="ai-recommendation-title-skeleton"></div>
-                  <div className="ai-recommendation-reason-skeleton" style={{width: '100%'}}></div>
-                  <div className="ai-recommendation-reason-skeleton" style={{width: '90%'}}></div>
-                  <div className="ai-recommendation-reason-skeleton" style={{width: '95%'}}></div>
-                  <div className="ai-recommendation-reason-skeleton" style={{width: '85%'}}></div>
+                  <div className="ai-recommendation-reason-skeleton" style={{ width: '100%' }}></div>
+                  <div className="ai-recommendation-reason-skeleton" style={{ width: '90%' }}></div>
+                  <div className="ai-recommendation-reason-skeleton" style={{ width: '95%' }}></div>
+                  <div className="ai-recommendation-reason-skeleton" style={{ width: '85%' }}></div>
                 </div>
                 <div className="ai-recommendation-button-skeleton"></div>
               </div>
@@ -184,7 +179,7 @@ function App() {
               <div key={index} className="bg-slate-800/50 backdrop-blur rounded-xl border border-white/10 overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col h-full">
                 <div className="w-full h-60 overflow-hidden">
                   {suggestion.poster_path ? (
-                    <img 
+                    <img
                       src={`https://image.tmdb.org/t/p/w500${suggestion.poster_path}`}
                       alt={`${suggestion.title} poster`}
                       className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
@@ -200,14 +195,14 @@ function App() {
                   <p className="text-sm text-white/80 mb-4">{suggestion.reason}</p>
                 </div>
                 {suggestion.id ? (
-                  <Link 
-                    to={suggestion.is_tv ? `/tv/${suggestion.id}` : `/${suggestion.id}`} 
+                  <Link
+                    to={suggestion.is_tv ? `/tv/${suggestion.id}` : `/${suggestion.id}`}
                     className="block w-full py-3 bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-center font-semibold transition-opacity hover:opacity-90"
                   >
                     View Details
                   </Link>
                 ) : (
-                  <button 
+                  <button
                     className="block w-full py-3 bg-gray-600 text-white/70 text-center font-semibold cursor-not-allowed"
                     disabled
                   >

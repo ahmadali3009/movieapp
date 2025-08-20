@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import MovieCard from './components/MovieCard';
+import axiosInstance from './axiosinstance/Axiosinstance';
 
 const Toprated = () => {
   const [page, setPage] = useState(1);
@@ -19,33 +20,30 @@ const Toprated = () => {
       setPage(page - 1);
     }
   };
-  let token = localStorage.getItem("token")
-  console.log("token toprated", token)
-  if (token) {
-    try {
-      // You'll need to install jwt-decode
-      const decodedToken = jwtDecode<{exp?: number}>(token);
-      console.log("decodedToken", decodedToken)
-      const currentTime = Date.now() / 1000;
+ let token = localStorage.getItem("token");
+console.log("token toprated", token);
 
-      if (decodedToken.exp && decodedToken.exp < currentTime) {
-        // Token expired, handle accordingly
-        localStorage.removeItem('token');
-        window.location.href = '/login';
-        throw new Error('Token expired');
-      }
-    } catch (error) {
-      // Invalid token
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-      throw new Error('Invalid token');
+if (token) {
+  try {
+    const decodedToken = jwtDecode<{ exp?: number }>(token);
+    console.log("decodedToken", decodedToken);
+    const currentTime = Date.now() / 1000;
+
+    if (decodedToken.exp && decodedToken.exp < currentTime) {
+      console.warn("Token expired, will attempt refresh via Axios interceptor");
+      // ❌ Don't remove token or redirect here
+      // ✅ Let interceptor do the refresh
     }
+  } catch (error) {
+    console.error("Invalid token format", error);
+    localStorage.removeItem("token");
+    window.location.href = "/login"; // Only for truly invalid token
   }
-
+}
   const FetchTopRated = async () => {
     // Get API URL from environment variable or use localhost as fallback
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    const data = await axios.get(`${apiUrl}/api/top-detail?page=${page}`,
+    // const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const data = await axiosInstance.get(`/api/top-detail?page=${page}`,
       {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

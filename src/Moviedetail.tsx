@@ -2,11 +2,12 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import Navbar from './components/Navbar';
+import axiosInstance from './axiosinstance/Axiosinstance';
 
 const Moviedetail = () => {
     let { id } = useParams();
     let Fmoviesbyid = async () => {
-        const response = await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=2548a82cdbcc3c2703fceec99fee278e`);
+        const response = await axiosInstance.get(`https://api.themoviedb.org/3/movie/${id}?api_key=2548a82cdbcc3c2703fceec99fee278e`);
         return response.data;
     }    // Fetch movie details
     const { data, error, isLoading} = useQuery({
