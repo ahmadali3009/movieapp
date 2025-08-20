@@ -1,6 +1,7 @@
 import axios from 'axios';
 import{ createContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../axiosinstance/Axiosinstance';
 interface User
 {
   username: string;
@@ -16,6 +17,7 @@ interface AuthContextType{
   userlogin: login | null,
   user: User | null,
   login: (userDatalogin : login) => Promise<void>
+  // refreshToken: () => Promise<void>
   signup: (userDate : User) => Promise<void>
   logout: () => void
   authStatus:{
@@ -96,22 +98,22 @@ export const AuthProvider = ({ children }: any) => {
     }
   };
   const login =async (userDatalogin: login) => {
-    // Get API URL from environment variable or use localhost as fallback
     try{
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    // const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     setauthstatus({
       isloading: true,
       iserror: false,
       issuccess: false,
       message: "logging in...",
     })
-    let response = await axios.post(`${apiUrl}/api/login`, userDatalogin)
+    let response = await axiosInstance.post(`/api/login`, userDatalogin)
     // if(response)
     //   {
     //     alert("login success")
     //   }
     console.log("response", response)
     localStorage.setItem("token", response.data.token)
+    localStorage.setItem("refreshToken", response.data.refreshToken)
     navigate("/" , {replace: true})
     setuserlogin(userDatalogin);
     setauthstatus({
@@ -131,6 +133,23 @@ export const AuthProvider = ({ children }: any) => {
   }
   };
 
+  // let refreshToken = async () => {
+  //   try {
+  //     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  //     const refreshToken = localStorage.getItem("refreshToken");
+  //     if (!refreshToken) {
+  //       throw new Error("No refresh token found");
+  //     }
+  //     const response = await axios.post(`${apiUrl}/api/refreshtoken`, { token: refreshToken });
+  //     localStorage.setItem("token", response.data.token);
+  //     console.log("Token refreshed successfully");
+  //   } catch (error) {
+  //     console.error("Failed to refresh token:", error);
+  //     localStorage.removeItem("token");
+  //     localStorage.removeItem("refreshToken");
+  //     navigate("/login", { replace: true });
+  //   }
+  // }
 
   const logout = () => {
     setUser(null);

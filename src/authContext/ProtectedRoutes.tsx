@@ -1,10 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 
 const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
-  const token = localStorage.getItem("token")
-  console.log("token", token)
-  return token ? <>{children}</> : <Navigate to="/login" replace />;
-}
+    const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isAuth, setIsAuth] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsAuth(!!token);
+    setCheckingAuth(false);
+  }, []);
+
+  if (checkingAuth) {
+    return <div>Loading...</div>; // or spinner
+  }
+
+  return isAuth ? <>{children}</> : <Navigate to="/login" replace />;
+};
 
 export default ProtectedRoutes
