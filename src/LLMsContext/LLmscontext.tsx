@@ -1,6 +1,5 @@
 import axios from "axios";
 import { createContext, useState } from "react";
-import axiosInstance from "../axiosinstance/Axiosinstance";
 
 // Define the structure of a movie suggestion
 interface MovieSuggestion {

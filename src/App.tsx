@@ -1,8 +1,7 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import './App.css'
-import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
 import Toprated from './Toprated'
 import HeroBanner from './components/HeroBanner'
