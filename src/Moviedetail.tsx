@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import Navbar from './components/Navbar';
 import axiosInstance from './axiosinstance/Axiosinstance';
