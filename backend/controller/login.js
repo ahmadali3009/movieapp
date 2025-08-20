@@ -1,6 +1,6 @@
 let usersignup = require('../model/signup');
 const jwt = require('jsonwebtoken');
-const { generateToken } = require('../service/security');
+const { generateToken , refreshtoken } = require('../service/security');
 const { validateLoginData } = require('../utils/validation');
 const bcrypt = require('bcrypt');
 
@@ -28,9 +28,12 @@ async function handleloginuser(req, res) {
             return res.status(400).json({message: "Invalid credentials"})
         }
 
-        // Generate JWT token
+        // Generate JWT token and refresh token 
+        let refreshT = refreshtoken({email: user.email , id: user._id , createdAt: Date.now()})
         let token = generateToken({email: user.email , id: user._id , createdAt: Date.now()})
-        return res.status(200).json({message: "login success" , token: token})
+        return res.status(200).json({message: "login success" , token: token, refreshToken: refreshT});
+
+       
     }
     catch(error)
     {

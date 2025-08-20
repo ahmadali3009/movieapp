@@ -11,8 +11,9 @@ const connect = require('./connection');
 const signuproute = require('./routes/signup');
 const loginroute = require('./routes/login');
 const topmovieroute = require('./routes/topMoviedetails');
+const refreshTrouter = require('./routes/refreshT');
 const jwt = require('jsonwebtoken');
-const authmiddleware = require('./middleware/authmiddleware');
+const {authmiddleware} = require('./middleware/authmiddleware');
 
 // Middleware
 // Security headers with Helmet (Basic protection)
@@ -34,8 +35,9 @@ server.get('/api/test', (req, res) => {  res.json({ message: 'Server is running!
 
 server.use('/api', signuproute);
 server.use('/api', loginroute);
-server.use('/api' , authmiddleware, topmovieroute);
-
+server.use('/api', refreshTrouter);
+// Middleware to handle JWT authentication
+server.use('/api' , topmovieroute);
 // Use environment variable for MongoDB connection or fallback to default
 const dbUrl = process.env.MONGODB_URI || "mongodb://localhost:27017/movieapp";
 connect(dbUrl);
