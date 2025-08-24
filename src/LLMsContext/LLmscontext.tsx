@@ -72,6 +72,7 @@ export const LLMsProvider = ({ children }: any) => {
   const [responsesuggestion, setresponsesuggestion] = useState<MovieSuggestion[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
   const LLMssugetion = async (inputque: string) => {
     if (!inputque.trim()) {
@@ -83,25 +84,12 @@ export const LLMsProvider = ({ children }: any) => {
       setError(null);
       console.log("inputque", inputque);
 
-      const response = await axios({
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyAUzTpPt76bXGtVx9MaPiq39hyZq6bW2EI',
-        data: {
-          "contents": [{
-            "parts": [{
-              "text": `Give me the top 5 movies or TV shows similar to "${inputque}". Return the response as a JSON array with objects containing "title" and "reason" fields. The "reason" should be 100 words long and explain why this movie is similar to "${inputque}".`
-            }]
-          }]
-        }
-      });
+      const response = await axios.post(`${apiUrl}/api/gemini` , {inputque});
 
-      console.log('Response from server:', response.data);
+      // console.log('Response from server:', response);
 
       // Extract the text content from Gemini's response
-      const textContent = response.data.candidates[0].content.parts[0].text;
+      const textContent = response.data;
 
       // Parse the JSON from the text response
       // First, try to find JSON in the response (it might be wrapped in markdown code blocks)
