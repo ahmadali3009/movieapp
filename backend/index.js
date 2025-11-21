@@ -22,16 +22,21 @@ server.use(helmet());
 
 // Configure CORS to allow requests from your frontend domain
 server.use(cors({
-  origin: ['http://localhost:5173', 'https://movieapp-1-9vz5.onrender.com'],
+  origin: ['http://localhost:5173', 'https://movieapp-1-9vz5.onrender.com', 'http://localhost'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
+
+// Explicitly handle OPTIONS preflight requests
+server.options('*', cors());
 
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 // Test route
-server.get('/api/test', (req, res) => {  res.json({ message: 'Server is running!' });
+server.get('/api/health', (req, res) => {  res.json({ message: 'Server is running!' });
 });
 
 server.use('/api', signuproute);

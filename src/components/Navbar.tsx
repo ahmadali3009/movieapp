@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import '../styles/Navbar.css';
+import { Search, Menu, X, User } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -33,84 +36,143 @@ const Navbar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'About', path: '/about' },
+  ];
+
   return (
-    <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
-      <div className="navbar-container">
-        <div className="logo">
-          <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">CineVerse</span>
-            <span className="ml-1 text-sm font-semibold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">AI</span>
+    <nav
+      className={twMerge(
+        'fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b border-transparent',
+        isScrolled
+          ? 'bg-slate-900/90 backdrop-blur-md border-slate-800 shadow-lg py-3'
+          : 'bg-transparent py-5'
+      )}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center">
+          {/* Logo */}
+          <Link to="/" className="flex items-center group">
+            <span className="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">
+              CineVerse
+            </span>
+            <span className="ml-1 text-sm font-semibold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              AI
+            </span>
           </Link>
-        </div>
 
-        {/* Desktop Navigation */}
-        <ul className="nav-menu">
-          <li className="nav-item">
-            <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>
-              Home
-            </Link>
-          </li>
-        
-          <li className="nav-item">
-            <Link to="/about" className={`nav-link ${isActive('/about') ? 'active' : ''}`}>
-              About
-            </Link>
-          </li>
-        </ul>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            <ul className="flex space-x-6">
+              {navLinks.map((link) => (
+                <li key={link.path}>
+                  <Link
+                    to={link.path}
+                    className={clsx(
+                      'text-sm font-medium transition-colors duration-200 relative py-1',
+                      isActive(link.path)
+                        ? 'text-white'
+                        : 'text-slate-300 hover:text-white'
+                    )}
+                  >
+                    {link.name}
+                    {isActive(link.path) && (
+                      <motion.div
+                        layoutId="navbar-indicator"
+                        className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-full"
+                        initial={false}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
 
-        {/* User Actions */}
-        <div className="nav-actions">
-          <button className="search-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </button>
-          <Link to="/login" className="login-button">
-            Login
-          </Link>
-        </div>
+            {/* User Actions */}
+            <div className="flex items-center space-x-4 pl-6 border-l border-slate-700">
+              <button className="text-slate-300 hover:text-white transition-colors p-2 rounded-full hover:bg-white/5">
+                <Search size={20} />
+              </button>
+              <Link
+                to="/login"
+                className="flex items-center space-x-2 bg-gradient-to-r from-indigo-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40"
+              >
+                <User size={16} />
+                <span>Login</span>
+              </Link>
+            </div>
+          </div>
 
-        {/* Mobile Menu Button */}
-        <div className="mobile-menu-button" onClick={toggleMobileMenu}>
-          <div className={`hamburger ${isMobileMenuOpen ? 'open' : ''}`}>
-            <span></span>
-            <span></span>
-            <span></span>
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={toggleMobileMenu}
+              className="text-slate-300 hover:text-white p-2 transition-colors"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
         </div>
       </div>
 
       {/* Mobile Navigation */}
-      <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
-        <ul className="mobile-nav-menu">
-          <li className="mobile-nav-item">
-            <Link to="/" className={`mobile-nav-link ${isActive('/') ? 'active' : ''}`} onClick={toggleMobileMenu}>
-              Home
-            </Link>
-          </li>
-          <li className="mobile-nav-item">
-            <Link to="/movies" className={`mobile-nav-link ${isActive('/movies') ? 'active' : ''}`} onClick={toggleMobileMenu}>
-              Movies
-            </Link>
-          </li>
-          <li className="mobile-nav-item">
-            <Link to="/tv-shows" className={`mobile-nav-link ${isActive('/tv-shows') ? 'active' : ''}`} onClick={toggleMobileMenu}>
-              TV Shows
-            </Link>
-          </li>
-          <li className="mobile-nav-item">
-            <Link to="/about" className={`mobile-nav-link ${isActive('/about') ? 'active' : ''}`} onClick={toggleMobileMenu}>
-              About
-            </Link>
-          </li>
-          <li className="mobile-nav-item">
-            <Link to="/login" className="mobile-login-button" onClick={toggleMobileMenu}>
-              Login
-            </Link>
-          </li>
-        </ul>
-      </div>
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="md:hidden bg-slate-900/95 backdrop-blur-xl border-b border-slate-800 overflow-hidden"
+          >
+            <div className="px-4 pt-2 pb-6 space-y-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={toggleMobileMenu}
+                  className={clsx(
+                    'block px-3 py-3 rounded-md text-base font-medium transition-colors',
+                    isActive(link.path)
+                      ? 'bg-white/10 text-white'
+                      : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                  )}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <div className="pt-4 mt-4 border-t border-slate-800 grid grid-cols-2 gap-4">
+                <Link
+                  to="/movies"
+                  onClick={toggleMobileMenu}
+                  className="text-center py-2 text-slate-300 hover:text-white bg-white/5 rounded-lg"
+                >
+                  Movies
+                </Link>
+                <Link
+                  to="/tv-shows"
+                  onClick={toggleMobileMenu}
+                  className="text-center py-2 text-slate-300 hover:text-white bg-white/5 rounded-lg"
+                >
+                  TV Shows
+                </Link>
+              </div>
+              <div className="pt-4">
+                <Link
+                  to="/login"
+                  onClick={toggleMobileMenu}
+                  className="flex items-center justify-center w-full space-x-2 bg-gradient-to-r from-indigo-600 to-pink-600 text-white px-4 py-3 rounded-xl font-medium shadow-lg"
+                >
+                  <User size={18} />
+                  <span>Login</span>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

@@ -1,14 +1,18 @@
 import axios from 'axios';
 
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// Use runtime environment variable (injected by env.sh script) or relative URLs for Kubernetes
+// Relative URLs go through nginx proxy, avoiding CORS issues
+const apiUrl = (typeof window !== 'undefined' && window.env?.API_URL) 
+    ? window.env.API_URL 
+    : import.meta.env.VITE_API_URL || '';  // Empty string = relative URLs (goes through nginx proxy)
 
 const axiosInstance = axios.create({
-    baseURL: apiUrl,
+    baseURL: apiUrl, // Empty string = relative URLs (goes through nginx proxy)
 });
 
 // Attach access token to every request
 axiosInstance.interceptors.request.use(
-    (config) => {
+    (config : any) => {
         const token = localStorage.getItem('token');
         if (token) {
             config.headers = config.headers || {};
@@ -16,13 +20,13 @@ axiosInstance.interceptors.request.use(
         }
         return config;
     },
-    (error) => Promise.reject(error)
+    (error : any) => Promise.reject(error)
 );
 
 // Handle expired tokens
 axiosInstance.interceptors.response.use(
-    (response) => response,
-    async (error) => {
+    (response : any) => response,
+    async (error : any) => {
         const originalRequest = error.config;
 
         if (error.response?.status === 401 && !originalRequest._retry) {
@@ -32,7 +36,7 @@ axiosInstance.interceptors.response.use(
                 const refreshToken = localStorage.getItem('refreshToken');
                 if (!refreshToken) throw new Error('No refresh token');
 
-                const res = await axios.post(`${apiUrl}/api/refreshtoken`, { token: refreshToken });
+                const res = await axios.post('/api/refreshtoken', { token: refreshToken });
 
                 const newToken = res.data.token;
                 console.log("New token received:", newToken);

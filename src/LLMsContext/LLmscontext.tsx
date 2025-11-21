@@ -72,7 +72,10 @@ export const LLMsProvider = ({ children }: any) => {
   const [responsesuggestion, setresponsesuggestion] = useState<MovieSuggestion[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  // Use relative URLs for Kubernetes (goes through nginx proxy)
+  const apiUrl = (typeof window !== 'undefined' && window.env?.API_URL) 
+    ? window.env.API_URL 
+    : import.meta.env.VITE_API_URL || '';
 
   const LLMssugetion = async (inputque: string) => {
     if (!inputque.trim()) {
