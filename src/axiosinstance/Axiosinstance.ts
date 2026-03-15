@@ -36,12 +36,11 @@ axiosInstance.interceptors.response.use(
                 const refreshToken = localStorage.getItem('refreshToken');
                 if (!refreshToken) throw new Error('No refresh token');
 
-                const res = await axios.post('/api/refreshtoken', { token: refreshToken });
+                const res = await axios.create({ baseURL: apiUrl }).post('/api/refreshtoken', { token: refreshToken });
 
                 const newToken = res.data.token;
                 console.log("New token received:", newToken);
                 localStorage.setItem('token', newToken);
-                localStorage.removeItem('refreshToken');
 
                 // update headers
                 axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
